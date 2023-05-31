@@ -15,6 +15,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -25,7 +31,7 @@
         android:theme="@style/Theme.Scan"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
+            android:name=".bluetooth.MainActivity2"
             android:exported="true" >
 
             <intent-filter>
@@ -35,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".wifi.MainActivity"
             android:exported="true">
 
         </activity>

@@ -1,4 +1,4 @@
-package com.example.scan
+package com.example.scan.wifi
 
 import WifiScanner
 import android.Manifest
@@ -16,8 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.scan.R
 import com.example.scan.databinding.ActivityMainBinding
-import com.example.scan.wifi.ScanResultAdapter
 
 class MainActivity : AppCompatActivity()
 {
