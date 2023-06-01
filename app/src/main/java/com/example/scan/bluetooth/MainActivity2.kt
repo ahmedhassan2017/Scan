@@ -7,18 +7,19 @@ import com.example.scan.databinding.ActivityMain2Binding
 
 class MainActivity2 : AppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
-    private lateinit var bluetoothManager: BluetoothManager
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main2)
 
-        bluetoothManager = BluetoothManager(this)
+
+
 
 
         binding.textview2.setOnClickListener {
-            bluetoothManager.startDeviceDiscovery()
+
         }
 
     }

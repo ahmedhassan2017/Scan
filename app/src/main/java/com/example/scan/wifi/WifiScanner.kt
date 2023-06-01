@@ -10,7 +10,9 @@ import android.os.Looper
 import android.widget.Toast
 
 class WifiScanner(private val context: Context) {
-
+    companion object{
+        val TAG ="ahmed"
+    }
     private var wifiManager: WifiManager? = null
     private val scanInterval: Long = 7500 // Scan interval in milliseconds
 

@@ -1,5 +1,6 @@
 package com.example.scan.bluetooth
 
+import WifiScanner.Companion.TAG
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -12,7 +13,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.scan.wifi_direct.WifiDirectManager.Companion.TAG
+import com.example.scan.wifi.MainActivity
 
 class BluetoothManager(private val activity: Activity) {
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
@@ -29,13 +30,17 @@ class BluetoothManager(private val activity: Activity) {
                             // Do something with the discovered device
                             Log.d(TAG, "Found device: ${device.alias} (${device.address})")
                             bluetoothDevices.add(device)
+                            updateDeviceList(bluetoothDevices)
+
+
 
 
                         }
                     }
                     BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                        Log.d(TAG, "Discovery finished")
                         Log.d(TAG, "Discovery finished. Found ${bluetoothDevices.size} Blu devices.")
+                        bluetoothDevices.clear()
+
 
                     }
                 }
@@ -43,6 +48,12 @@ class BluetoothManager(private val activity: Activity) {
         }
     }
 
+
+    private fun updateDeviceList(devices: List<BluetoothDevice>) {
+        activity.runOnUiThread {
+            (activity as MainActivity).updateDeviceList(devices)
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.S) fun startDeviceDiscovery() {
         if (!hasBluetoothPermissions()) {
             requestBluetoothPermissions()

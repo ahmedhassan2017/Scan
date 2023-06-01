@@ -2,6 +2,7 @@ package com.example.scan.wifi
 
 import WifiScanner
 import android.Manifest
+import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,6 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scan.R
+import com.example.scan.bluetooth.BluetoothDeviceAdapter
+import com.example.scan.bluetooth.BluetoothManager
 import com.example.scan.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity()
@@ -26,6 +29,11 @@ class MainActivity : AppCompatActivity()
     private var wifiManager: WifiManager? = null
     private lateinit var scanResultAdapter: ScanResultAdapter
 
+
+    // blu
+    private lateinit var bluetoothManager: BluetoothManager
+    private lateinit var bluetoothDeviceAdapter: BluetoothDeviceAdapter
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -34,12 +42,23 @@ class MainActivity : AppCompatActivity()
         val filter = IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         registerReceiver(wifiScanReceiver, filter)
         wifiScanner = WifiScanner(this)
-        binding.textview.setOnClickListener {
+        binding.scan.setOnClickListener {
             startScanningWithPermissionCheck()
+
+            //blu
+            bluetoothManager.startDeviceDiscovery()
+
         }
 
 
         binding.recycler.layoutManager = LinearLayoutManager(this)
+
+
+        //blu
+        bluetoothManager = BluetoothManager(this)
+        binding.recyclerBlu.layoutManager = LinearLayoutManager(this)
+        bluetoothDeviceAdapter = BluetoothDeviceAdapter(emptyList())
+        binding.recyclerBlu.adapter = bluetoothDeviceAdapter
 
 
     }
@@ -67,20 +86,20 @@ class MainActivity : AppCompatActivity()
         scanResultAdapter = ScanResultAdapter(scanResults)
         binding.recycler.adapter = scanResultAdapter
         scanResultAdapter.notifyDataSetChanged()
-        binding.textview.text = scanResults.size.toString()
+        binding.wifiSize.text = scanResults.size.toString()
 
 
     }
 
-
-    override fun onResume()
-    {
-        super.onResume()
-        if (checkPermission())
-        {
-            wifiScanner.startScanning()
-        }
-    }
+//
+//    override fun onResume()
+//    {
+//        super.onResume()
+//        if (checkPermission())
+//        {
+//            wifiScanner.startScanning()
+//        }
+//    }
 
     private fun startScanningWithPermissionCheck()
     {
@@ -121,6 +140,11 @@ class MainActivity : AppCompatActivity()
         }
     }
 
+    fun updateDeviceList(devices: List<BluetoothDevice>) {
+        bluetoothDeviceAdapter.devices = devices
+        bluetoothDeviceAdapter.notifyDataSetChanged()
+        binding.blueSize.text =devices.size.toString()
+    }
     companion object
     {
         private const val PERMISSION_REQUEST_CODE = 123
