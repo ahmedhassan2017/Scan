@@ -2,6 +2,7 @@ package com.example.scan.wifi
 
 import WifiScanner
 import android.Manifest
+import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,8 +11,11 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -34,7 +38,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var bluetoothManager: BluetoothManager
     private lateinit var bluetoothDeviceAdapter: BluetoothDeviceAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?)
+    @RequiresApi(Build.VERSION_CODES.Q) override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -46,7 +50,18 @@ class MainActivity : AppCompatActivity()
             startScanningWithPermissionCheck()
 
             //blu
-            bluetoothManager.startDeviceDiscovery()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val packageName = packageName
+                val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                    bluetoothManager.requestIgnoreBatteryOptimizations()
+                } else {
+                    bluetoothManager.startScanning()
+                }
+            } else {
+                bluetoothManager.startScanning()
+            }
+
 
         }
 
@@ -110,6 +125,7 @@ class MainActivity : AppCompatActivity()
         {
             requestPermission()
         }
+
     }
 
     private fun checkPermission(): Boolean
@@ -137,8 +153,23 @@ class MainActivity : AppCompatActivity()
                 Toast.makeText(this@MainActivity, "Please grant the permission to be able to scan ", Toast.LENGTH_LONG).show()
                 startScanningWithPermissionCheck()
             }
+
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
+            if (resultCode == Activity.RESULT_OK) {
+               bluetoothManager.startScanning()
+            } else {
+                // Permission denied or not available
+                // Handle accordingly
+            }
         }
     }
+
 
     fun updateDeviceList(devices: List<BluetoothDevice>) {
         bluetoothDeviceAdapter.devices = devices
@@ -147,6 +178,7 @@ class MainActivity : AppCompatActivity()
     }
     companion object
     {
+        private const val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 1001
         private const val PERMISSION_REQUEST_CODE = 123
     }
 }

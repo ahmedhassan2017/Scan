@@ -10,8 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.scan.wifi.MainActivity
 
@@ -20,6 +24,30 @@ class BluetoothManager(private val activity: Activity) {
     private val bluetoothReceiver: BroadcastReceiver
     private val bluetoothDevices: MutableList<BluetoothDevice> = mutableListOf()
 
+
+
+    private val scanInterval: Long = 7500 // 7.5 seconds
+    private val scanHandler = Handler()
+    private val scanRunnable = object : Runnable {
+        @RequiresApi(Build.VERSION_CODES.S) override fun run() {
+            startDeviceDiscovery()
+            scanHandler.postDelayed(this, scanInterval)
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.Q) fun startScanning() {
+        if (scanHandler.hasCallbacks(scanRunnable)) {
+            return  // Scanning is already in progress
+        }
+
+        scanHandler.post(scanRunnable)
+    }
+
+    fun stopScanning() {
+        scanHandler.removeCallbacks(scanRunnable)
+        bluetoothAdapter?.cancelDiscovery()
+    }
     init {
         bluetoothReceiver = object : BroadcastReceiver() {
             @RequiresApi(Build.VERSION_CODES.R) override fun onReceive(context: Context?, intent: Intent?) {
@@ -39,7 +67,8 @@ class BluetoothManager(private val activity: Activity) {
                     }
                     BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                         Log.d(TAG, "Discovery finished. Found ${bluetoothDevices.size} Blu devices.")
-                        bluetoothDevices.clear()
+                        Toast.makeText(context, "Discovery finished. Found ${bluetoothDevices.size} Blu devices.", Toast.LENGTH_LONG    ).show()
+//
 
 
                     }
@@ -55,6 +84,7 @@ class BluetoothManager(private val activity: Activity) {
         }
     }
     @RequiresApi(Build.VERSION_CODES.S) fun startDeviceDiscovery() {
+
         if (!hasBluetoothPermissions()) {
             requestBluetoothPermissions()
             return
@@ -68,9 +98,11 @@ class BluetoothManager(private val activity: Activity) {
         if (!bluetoothAdapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH)
+
         } else {
             registerBluetoothReceiver()
             bluetoothAdapter.startDiscovery()
+            bluetoothDevices.clear()
         }
     }
 
@@ -102,6 +134,14 @@ class BluetoothManager(private val activity: Activity) {
         activity.unregisterReceiver(bluetoothReceiver)
     }
 
+    private val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 1001
+
+    fun requestIgnoreBatteryOptimizations() {
+        val packageName = activity.packageName
+        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        intent.data = Uri.parse("package:$packageName")
+        activity.startActivityForResult(intent, REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+    }
     companion object {
         private const val REQUEST_ENABLE_BLUETOOTH = 1
         private const val REQUEST_BLUETOOTH_PERMISSIONS = 2

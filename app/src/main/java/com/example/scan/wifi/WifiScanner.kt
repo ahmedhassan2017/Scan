@@ -50,10 +50,10 @@ class WifiScanner(private val context: Context) {
             context.registerReceiver(wifiScanReceiver, filter)
 
             // Start initial scan
-            startScan()
+//            startScan()
 
             // Start periodic scanning
-//            Handler(Looper.getMainLooper()).postDelayed(scanRunnable, scanInterval)
+            Handler(Looper.getMainLooper()).postDelayed(scanRunnable, scanInterval)
         }
     }
 
