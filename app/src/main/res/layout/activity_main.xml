@@ -15,6 +15,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".wifi.MainActivity">
+    <Button
+        android:id="@+id/switch_btn"
+        android:layout_width="wrap_content"
+        android:layout_gravity="end"
+        android:layout_height="wrap_content"
+        android:text="Switch" />
 <LinearLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -83,6 +89,8 @@
 
         android:layout_gravity="center_horizontal"
         />
+
+
 
 
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 
 class WifiScanner(private val context: Context) {
@@ -14,14 +15,9 @@ class WifiScanner(private val context: Context) {
         val TAG ="ahmed"
     }
     private var wifiManager: WifiManager? = null
-    private val scanInterval: Long = 7500 // Scan interval in milliseconds
 
-    private val scanRunnable = object : Runnable {
-        override fun run() {
-            startScan()
-            Handler(Looper.getMainLooper()).postDelayed(this, scanInterval)
-        }
-    }
+     var counter_wifi = 0
+
 
     private val wifiScanReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -50,11 +46,10 @@ class WifiScanner(private val context: Context) {
             context.registerReceiver(wifiScanReceiver, filter)
 
             // Start initial scan
-//            startScan()
+            startScan()
 
-            // Start periodic scanning
-            Handler(Looper.getMainLooper()).postDelayed(scanRunnable, scanInterval)
-        }
+
+    }
     }
 
     private fun startScan() {
@@ -69,7 +64,9 @@ class WifiScanner(private val context: Context) {
             val signalStrength = result.level
 
             // Do whatever you want with the scan result data
-            println("SSID: $ssid, BSSID: $bssid, Signal Strength: $signalStrength")
+//            println("SSID: $ssid, BSSID: $bssid, Signal Strength: $signalStrength")
+            Log.d(TAG, "Found device WI-FI: SSID: $ssid, BSSID: $bssid, Signal Strength: $signalStrength")
+
 
 
         }

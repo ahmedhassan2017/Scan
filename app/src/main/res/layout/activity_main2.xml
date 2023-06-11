@@ -10,20 +10,42 @@
         <import type="android.view.View" />
     </data>
 
-<androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".bluetooth.MainActivity2">
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".bluetooth.MainActivity2">
-
+    android:layout_height="wrap_content">
     <Button
-        android:id="@+id/textview2"
+        android:id="@+id/startBLE"
         android:layout_width="wrap_content"
-        android:text="hhhhhhhhhhhhh"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginEnd="50dp"
+        android:text="start BLE Scan" />
+
+ <Button
+        android:id="@+id/stopBLE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stop BLE Scan" />
+
+</LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:id="@+id/textview1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </TextView>
+        </ScrollView>
+    </LinearLayout>
 
 </layout>

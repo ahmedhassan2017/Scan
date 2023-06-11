@@ -14,6 +14,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.os.PowerManager.PARTIAL_WAKE_LOCK
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scan.R
 import com.example.scan.bluetooth.BluetoothDeviceAdapter
 import com.example.scan.bluetooth.BluetoothManager
+import com.example.scan.bluetooth.MainActivity2
 import com.example.scan.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity()
@@ -46,19 +48,29 @@ class MainActivity : AppCompatActivity()
         val filter = IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         registerReceiver(wifiScanReceiver, filter)
         wifiScanner = WifiScanner(this)
-        binding.scan.setOnClickListener {
-            startScanningWithPermissionCheck()
 
+        var pm: PowerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wakeLock = pm.newWakeLock(PARTIAL_WAKE_LOCK, "filter:${javaClass.simpleName}")
+
+        wakeLock.acquire()
+        binding.scan.setOnClickListener {
+
+
+            startScanningWithPermissionCheck()
             //blu
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
                 val packageName = packageName
                 val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                if (!powerManager.isIgnoringBatteryOptimizations(packageName))
+                {
                     bluetoothManager.requestIgnoreBatteryOptimizations()
-                } else {
+                } else
+                {
                     bluetoothManager.startScanning()
                 }
-            } else {
+            } else
+            {
                 bluetoothManager.startScanning()
             }
 
@@ -75,6 +87,10 @@ class MainActivity : AppCompatActivity()
         bluetoothDeviceAdapter = BluetoothDeviceAdapter(emptyList())
         binding.recyclerBlu.adapter = bluetoothDeviceAdapter
 
+
+        binding.switchBtn.setOnClickListener {
+            startActivity(Intent(this@MainActivity,MainActivity2::class.java))
+        }
 
     }
 
@@ -158,12 +174,16 @@ class MainActivity : AppCompatActivity()
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
-            if (resultCode == Activity.RESULT_OK) {
-               bluetoothManager.startScanning()
-            } else {
+        if (requestCode == REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        {
+            if (resultCode == Activity.RESULT_OK)
+            {
+                bluetoothManager.startScanning()
+            } else
+            {
                 // Permission denied or not available
                 // Handle accordingly
             }
@@ -171,11 +191,13 @@ class MainActivity : AppCompatActivity()
     }
 
 
-    fun updateDeviceList(devices: List<BluetoothDevice>) {
+    fun updateDeviceList(devices: List<BluetoothDevice>)
+    {
         bluetoothDeviceAdapter.devices = devices
         bluetoothDeviceAdapter.notifyDataSetChanged()
-        binding.blueSize.text =devices.size.toString()
+        binding.blueSize.text = devices.size.toString()
     }
+
     companion object
     {
         private const val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 1001

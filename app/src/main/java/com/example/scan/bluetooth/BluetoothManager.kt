@@ -24,28 +24,18 @@ class BluetoothManager(private val activity: Activity) {
     private val bluetoothReceiver: BroadcastReceiver
     private val bluetoothDevices: MutableList<BluetoothDevice> = mutableListOf()
 
+    var counter_wifi = 0
 
 
-    private val scanInterval: Long = 7500 // 7.5 seconds
-    private val scanHandler = Handler()
-    private val scanRunnable = object : Runnable {
-        @RequiresApi(Build.VERSION_CODES.S) override fun run() {
-            startDeviceDiscovery()
-            scanHandler.postDelayed(this, scanInterval)
-        }
-    }
 
 
     @RequiresApi(Build.VERSION_CODES.Q) fun startScanning() {
-        if (scanHandler.hasCallbacks(scanRunnable)) {
-            return  // Scanning is already in progress
-        }
 
-        scanHandler.post(scanRunnable)
+
+        startDeviceDiscovery()
     }
 
     fun stopScanning() {
-        scanHandler.removeCallbacks(scanRunnable)
         bluetoothAdapter?.cancelDiscovery()
     }
     init {
@@ -56,7 +46,7 @@ class BluetoothManager(private val activity: Activity) {
                         val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                         device?.let {
                             // Do something with the discovered device
-                            Log.d(TAG, "Found device: ${device.alias} (${device.address})")
+                            Log.d(TAG, "Found device Bluetooth: ${device.alias} (${device.address})")
                             bluetoothDevices.add(device)
                             updateDeviceList(bluetoothDevices)
 
@@ -110,6 +100,7 @@ class BluetoothManager(private val activity: Activity) {
         return activity.checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED &&
         activity.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
         activity.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED &&
+        activity.checkSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED &&
                 activity.checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -118,7 +109,8 @@ class BluetoothManager(private val activity: Activity) {
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.WAKE_LOCK
         )
         activity.requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSIONS)
     }
