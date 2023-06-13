@@ -13,8 +13,11 @@ class BluetoothScanner(private val context: Context) {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothDevice.ACTION_FOUND -> {
+
                     val device: BluetoothDevice? =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                    Log.d("BluetoothScanner", "Normal Bluetooth ->${device?.name} ${device?.address}")
+
                     device?.let {
                         counterBluetooth++
                     }

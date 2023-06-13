@@ -25,6 +25,7 @@ class MainActivity2 : AppCompatActivity()
     // BLE
     private lateinit var bleDeviceScanner: BLEDeviceScanner
 
+
     private val timerRunnable = object : Runnable
     {
         override fun run()
@@ -56,18 +57,6 @@ class MainActivity2 : AppCompatActivity()
 
             handler.postDelayed(this, 7500) // Repeat every 7.5 seconds
 
-
-            // Initialize BLE device scanner
-            bleDeviceScanner = BLEDeviceScanner(this@MainActivity2)
-
-            // Set click listener for the "Start Scan" button
-
-            binding.startBLE.setOnClickListener {
-                bleDeviceScanner.startScan()
-            }
-            binding.stopBLE.setOnClickListener {
-                bleDeviceScanner.stopScan()
-            }
         }
     }
 
@@ -78,22 +67,48 @@ class MainActivity2 : AppCompatActivity()
         wifiScanner = WifiScanner2(this@MainActivity2)
         bluetoothScanner = BluetoothScanner(this)
 
+
+        binding.loopedScan.setOnClickListener{
+            wifiScanner.startScanning()
+            bluetoothScanner.startScanning()
+            handler.postDelayed(timerRunnable, 7500)
+        }
+
+
+
+
+
+        // Initialize BLE device scanner
+        bleDeviceScanner = BLEDeviceScanner(this@MainActivity2)
+
+        // Set click listener for the "Start Scan" button
+
+        binding.startBLE.setOnClickListener {
+            bleDeviceScanner.startScan()
+        }
+        binding.stopBLE.setOnClickListener {
+            bleDeviceScanner.stopScan()
+            wifiScanner.stopScanning()
+            bluetoothScanner.stopScanning()
+
+            handler.removeCallbacks(timerRunnable)
+
+        }
+
     }
 
     override fun onResume()
     {
         super.onResume()
-        wifiScanner.startScanning()
-        bluetoothScanner.startScanning()
-        handler.postDelayed(timerRunnable, 7500)
+
     }
 
     override fun onPause()
     {
         super.onPause()
-        wifiScanner.stopScanning()
-        bluetoothScanner.stopScanning()
-        handler.removeCallbacks(timerRunnable)
+//        wifiScanner.stopScanning()
+//        bluetoothScanner.stopScanning()
+//        handler.removeCallbacks(timerRunnable)
     }
 
     override fun onDestroy() {

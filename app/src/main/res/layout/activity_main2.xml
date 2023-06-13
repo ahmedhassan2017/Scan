@@ -15,23 +15,39 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".bluetooth.MainActivity2">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <Button
-        android:id="@+id/startBLE"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:text="start BLE Scan" />
 
- <Button
-        android:id="@+id/stopBLE"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="stop BLE Scan" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-</LinearLayout>
+            <Button
+                android:id="@+id/loopedScan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="start Looped Scan"
+                android:textSize="9sp" />
+
+            <Button
+                android:id="@+id/startBLE"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+android:layout_margin="5dp"
+                android:text="start BLE Scan"
+                android:textSize="9sp" />
+
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/stopBLE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+android:layout_gravity="center_horizontal"
+            android:text="stop All"
+            android:textSize="9sp" />
 
         <ScrollView
             android:layout_width="match_parent"
