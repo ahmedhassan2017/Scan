@@ -16,6 +16,7 @@ class BLEDeviceScanner(private val context: Context) {
     private val classicDevices: MutableMap<String, BluetoothDevice> = mutableMapOf()
     private val unknownDevices: MutableMap<String, BluetoothDevice> = mutableMapOf()
     private val dualDevices: MutableMap<String, BluetoothDevice> = mutableMapOf()
+    private val scannedDevices: MutableSet<BluetoothDevice> = mutableSetOf()
 
     init {
         scanCallback = object : ScanCallback() {
@@ -24,33 +25,38 @@ class BLEDeviceScanner(private val context: Context) {
 
                 device?.let {
 
-                    when (device.type) {
-
-                        BluetoothDevice.DEVICE_TYPE_LE -> {
-                            if (!bleDevices.containsKey(device.address)) {
-                                bleDevices[device.address] = device
-                                Log.d("BLEDeviceScanner", "Found BLE device: ${device.name} (${device.address})")
-                            }
-                        }
-                        BluetoothDevice.DEVICE_TYPE_CLASSIC -> {
-                            if (!classicDevices.containsKey(device.address)) {
-                                classicDevices[device.address] = device
-                                Log.d("BLEDeviceScanner", "Found Bluetooth Classic device: ${device.name} (${device.address})")
-                            }
-                        }
-                        BluetoothDevice.DEVICE_TYPE_UNKNOWN -> {
-                            if (!unknownDevices.containsKey(device.address)) {
-                                unknownDevices[device.address] = device
-                                Log.d("BLEDeviceScanner", "Found Unknown device: ${device.name} (${device.address})")
-                            }
-                        }
-                        BluetoothDevice.DEVICE_TYPE_DUAL -> {
-                            if (!dualDevices.containsKey(device.address)) {
-                                dualDevices[device.address] = device
-                                Log.d("BLEDeviceScanner", "Found Dual Mode device: ${device.name} (${device.address})")
-                            }
-                        }
+                    if (!scannedDevices.contains(device)) {
+                        scannedDevices.add(device)
+//                        Log.d("BLEDeviceScanner", "Found device: ${device.name} (${device.address})")
                     }
+
+//                    when (device.type) {
+//
+//                        BluetoothDevice.DEVICE_TYPE_LE -> {
+//                            if (!bleDevices.containsKey(device.address)) {
+//                                bleDevices[device.address] = device
+//                                Log.d("BLEDeviceScanner", "Found BLE device: ${device.name} (${device.address})")
+//                            }
+//                        }
+//                        BluetoothDevice.DEVICE_TYPE_CLASSIC -> {
+//                            if (!classicDevices.containsKey(device.address)) {
+//                                classicDevices[device.address] = device
+//                                Log.d("BLEDeviceScanner", "Found Bluetooth Classic device: ${device.name} (${device.address})")
+//                            }
+//                        }
+//                        BluetoothDevice.DEVICE_TYPE_UNKNOWN -> {
+//                            if (!unknownDevices.containsKey(device.address)) {
+//                                unknownDevices[device.address] = device
+//                                Log.d("BLEDeviceScanner", "Found Unknown device: ${device.name} (${device.address})")
+//                            }
+//                        }
+//                        BluetoothDevice.DEVICE_TYPE_DUAL -> {
+//                            if (!dualDevices.containsKey(device.address)) {
+//                                dualDevices[device.address] = device
+//                                Log.d("BLEDeviceScanner", "Found Dual Mode device: ${device.name} (${device.address})")
+//                            }
+//                        }
+//                    }
                 }
             }
 
@@ -88,16 +94,14 @@ class BLEDeviceScanner(private val context: Context) {
         bluetoothLeScanner?.stopScan(scanCallback)
 //        logDeviceCount()
     }
-
-    private fun logDeviceCount() {
-        Log.d("BLEDeviceScanner", "Total BLE devices found: ${bleDevices.size}")
-        for (device in bleDevices.values) {
-            Log.d("BLEDeviceScanner", "BLE Device: ${device.name} (${device.address})")
-        }
-
-        Log.d("BLEDeviceScanner", "Total Bluetooth Classic devices found: ${classicDevices.size}")
-        for (device in classicDevices.values) {
-            Log.d("BLEDeviceScanner", "Bluetooth Classic Device: ${device.name} (${device.address})")
-        }
+    // Add a method to get the scanned devices
+    fun getScannedDevices(): Set<BluetoothDevice> {
+        return scannedDevices
     }
+
+    // Add a method to clear the scanned devices
+    fun clearScannedDevices() {
+        scannedDevices.clear()
+    }
+
 }

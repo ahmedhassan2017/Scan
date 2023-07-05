@@ -3,6 +3,7 @@ package com.example.scan.bluetooth
 import BluetoothScanner
 import WifiScanner
 import WifiScanner2
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -95,6 +96,10 @@ class MainActivity2 : AppCompatActivity()
 
         }
 
+
+        binding.goToNext.setOnClickListener {
+            startActivity(Intent(this@MainActivity2,BleActivity::class.java))
+        }
     }
 
     override fun onResume()

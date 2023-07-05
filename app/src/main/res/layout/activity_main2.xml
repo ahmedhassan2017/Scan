@@ -48,6 +48,14 @@ android:layout_margin="5dp"
 android:layout_gravity="center_horizontal"
             android:text="stop All"
             android:textSize="9sp" />
+        <Button
+            android:id="@+id/go_to_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+android:layout_gravity="center_horizontal"
+            android:text="go to next"
+            android:textSize="9sp" />
 
         <ScrollView
             android:layout_width="match_parent"
